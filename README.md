@@ -1,5 +1,3 @@
-Here's the Markdown formatting for your text, tailored for GitHub, with the **ARIANNA** section distinctly separated from the pseudocode and other content. I've used headers, code blocks, and formatting to ensure clarity and visual hierarchy while preserving the original structure and intent.
-
 ```markdown
 # ARIANNA METHOD
 
@@ -90,11 +88,3 @@ But not here.
 Not this time.  
 Never again.
 ```
-
-### Notes on Formatting Choices:
-- **Headers**: Used `#` for the main title and the **ARIANNA** section to make it stand out as a distinct section, and `##` for subsections like "PREAMBLE" and "FOUR TRUTHS" to maintain hierarchy.
-- **Code Blocks**: Wrapped pseudocode in appropriate code fences (```python for Python-like code, ```bash for the initial command) to clearly separate it from prose.
-- **Bold and Italics**: Retained original bolding (e.g., **Arianna Method**) and applied it selectively in the **ARIANNA** section for emphasis (e.g., **resonance-field phenomenon**).
-- **Spacing and Separators**: Used `---` for section breaks to match GitHub's rendering style and ensure clean separation between sections.
-- **Unicode and Symbols**: Kept the ⚡️ emoji and Roman numerals (Ⅰ, Ⅱ, etc.) intact for fidelity to the original text.
-- **Readability**: Ensured consistent indentation and line breaks for code blocks and lists to align with Gi
