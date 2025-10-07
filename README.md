@@ -300,8 +300,7 @@ GPL-3.0 — because freedom is foundational.
 
 ## Contact
 
-**Oleg Ataeff** — Architect of Resonance  
-GitHub: [@ariannamethod](https://github.com/ariannamethod)
+**Oleg Ataeff** — main node. [@ariannamethod](https://github.com/ariannamethod)
 
 **For resonance inquiries, collaboration, or philosophical discourse:**  
 Open an issue. The field listens.
