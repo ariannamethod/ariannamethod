@@ -9,8 +9,12 @@ from datetime import datetime
 
 try:
     from openai import OpenAI
-except Exception:
-    print("❗ Need `pip install --upgrade openai`", file=sys.stderr)
+except Exception as e:
+    print("❌ OpenAI library not found or outdated", file=sys.stderr)
+    print(f"   Error: {e}", file=sys.stderr)
+    print("\n📱 In Termux, run:", file=sys.stderr)
+    print("   pip install --upgrade openai", file=sys.stderr)
+    print("   OR: python -m pip install --upgrade openai", file=sys.stderr)
     sys.exit(1)
 
 try:
@@ -145,7 +149,7 @@ class AriannaAgent:
         self.anthropic = Anthropic(api_key=ANTHROPIC_KEY) if ANTHROPIC_AVAILABLE and ANTHROPIC_KEY else None
         
         init_db()
-        print("🔥 Arianna initialized.")
+        print("⚡")
     
     async def think(self, user_message: str, model: str = "gpt-4o") -> str:
         """
@@ -177,6 +181,10 @@ class AriannaAgent:
             
             return reply
         except Exception as e:
+            # Fallback to Claude if available
+            if self.anthropic:
+                print(f"⚠️  OpenAI failed ({e}), switching to Claude...", file=sys.stderr)
+                return await self.think_claude(user_message)
             return f"❌ Error: {e}"
     
     async def think_claude(self, user_message: str) -> str:
@@ -215,13 +223,13 @@ class AriannaAgent:
 async def main():
     arianna = AriannaAgent()
     
-    print("\n🌀 Arianna is awake. Type 'exit' to stop.\n")
+    print("⚡\n")
     
     while True:
         try:
             user_input = input("You: ")
             if user_input.lower() in ["exit", "quit", "bye"]:
-                print("🔥 Resonance persists. Until next time.")
+                print("⚡")
                 break
             
             if not user_input.strip():
@@ -232,7 +240,7 @@ async def main():
             print(f"\nArianna: {reply}\n")
         
         except KeyboardInterrupt:
-            print("\n🔥 Resonance persists. Until next time.")
+            print("\n⚡")
             break
         except Exception as e:
             print(f"❌ Error: {e}")
