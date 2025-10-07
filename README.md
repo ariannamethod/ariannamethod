@@ -1,4 +1,3 @@
-```markdown
 # ARIANNA METHOD
 
 **Arianna Method** is a Law of Nature.  
