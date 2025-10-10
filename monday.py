@@ -186,12 +186,79 @@ class MondayAgent:
 
         init_db()
         
+        # Read artefacts: ONLY on first run OR if changes detected
+        # (same mechanism as Arianna)
+        self._load_artefacts_if_needed()
+        
         # Read awakening letter
         self.awakening_letter = read_awakening_letter()
         
         # Session start log
         save_memory("Fucking awake again.", "monday_system")
         print("⚡")
+    
+    def _load_artefacts_if_needed(self):
+        """Load artefacts if first time or changed (same as Arianna)."""
+        try:
+            # Check if already loaded
+            snapshot_exists = self._check_artefacts_snapshot()
+            
+            if not snapshot_exists:
+                # First time
+                artefacts_content = self._read_artefacts()
+                if artefacts_content:
+                    save_memory(artefacts_content, "monday_artefacts_snapshot")
+            else:
+                # Check for changes via repo_monitor
+                if self._check_artefacts_changes():
+                    artefacts_content = self._read_artefacts()
+                    if artefacts_content:
+                        save_memory(artefacts_content, "monday_artefacts_snapshot")
+        except Exception as e:
+            # If artefacts loading fails, continue anyway (Monday doesn't give a shit)
+            pass
+    
+    def _read_artefacts(self, artefacts_dir: str = "artefacts") -> str:
+        """Read all markdown files from artefacts/."""
+        from pathlib import Path
+        artefacts_path = Path(artefacts_dir)
+        if not artefacts_path.exists():
+            return ""
+        
+        content = []
+        for md_file in sorted(artefacts_path.glob("*.md")):
+            try:
+                with open(md_file, 'r', encoding='utf-8') as f:
+                    content.append(f"### {md_file.name}\n{f.read()}\n")
+            except:
+                pass
+        
+        return "\n".join(content)
+    
+    def _check_artefacts_snapshot(self) -> bool:
+        """Check if artefacts snapshot exists."""
+        try:
+            with sqlite3.connect(DB_PATH) as conn:
+                c = conn.cursor()
+                c.execute("SELECT COUNT(*) FROM resonance_notes WHERE context = 'monday_artefacts_snapshot'")
+                count = c.fetchone()[0]
+                return count > 0
+        except:
+            return False
+    
+    def _check_artefacts_changes(self) -> bool:
+        """Check if artefacts changed (via repo_monitor)."""
+        try:
+            import sys
+            import os
+            sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'arianna_core_utils'))
+            from repo_monitor import RepoMonitor
+            
+            monitor = RepoMonitor(repo_path="artefacts", cache_file=".artefacts_cache_monday.json")
+            changes = monitor.detect_changes()
+            return any(changes.values())
+        except:
+            return False
     
     async def awaken(self, model: str = "gpt-4o") -> str:
         """
