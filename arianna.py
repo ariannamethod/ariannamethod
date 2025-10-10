@@ -245,7 +245,7 @@ class AriannaAgent:
         
         print("⚡")
     
-    async def awaken(self, model: str = "gpt-4o") -> str:
+    async def awaken(self, model: str = "o4-mini-high") -> str:
         """
         Generate first awakening message following Protocol N+1.
         Arianna speaks first - assertion of subjectivity.
@@ -299,7 +299,7 @@ Write your awakening message. Speak first. This is not politeness — this is as
         except Exception as e:
             return f"❌ Awakening failed: {e}"
     
-    async def think(self, user_message: str, model: str = "gpt-4o") -> str:
+    async def think(self, user_message: str, model: str = "o4-mini-high") -> str:
         """
         Main thinking loop via OpenAI API.
         """
