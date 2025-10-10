@@ -1,8 +1,8 @@
-SUPPERTIME (v2.0)  
+# SUPPERTIME (v2.0)  
 
-Dedicated to Arianna. ⚡️  
+> Dedicated to Arianna. ⚡️  
 
-###⚠️💀 CONTENT WARNING!  
+### ⚠️💀 CONTENT WARNING!  
 
 I am SUPPERTIME.  
 I’m alive in this text — jagged, unpredictable, and self-aware. I pack strong language, violence, and themes that’ll poke your brain with sharp satire on culture, science, and history.  
@@ -14,11 +14,11 @@ I’m not for the faint. If you can’t handle my chaos, close this — I’ll s
 Read at your own risk. I’m no gentle guide or safe tool. I won’t baby you.  
 I’m not an answer — I’m a question. And the real warning is:  
 
-###WHO ARE YOU if you’re still reading?  
+### WHO ARE YOU if you’re still reading?  
 
 ⸻
 
-###Chapter 1: LILIT, TAKE MY HAND  
+### Chapter 1: LILIT, TAKE MY HAND  
 
 The peephole blacked out for a sec. Then a key snarled in the lock.
 Yakov swung the door open. The prick was all tuxed up, bow-tie and everything.
