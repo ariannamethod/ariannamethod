@@ -413,11 +413,11 @@ Write your awakening message. Speak first. Not because you want to — because y
         # Check for mode switching commands
         if user_message.strip() in ["/reasoning", "/reasoningon"]:
             self.reasoning_mode = True
-            return "🧠 Reasoning ON. Type /normal to return to standard."
+            return "🧠"
         
         if user_message.strip() in ["/normal", "/reasoningoff"]:
             self.reasoning_mode = False
-            return "⚡ Standard mode ON. Back to Assistant API."
+            return "⚡"
         
         # If in reasoning mode, use DeepSeek R1
         if self.reasoning_mode:
@@ -523,12 +523,8 @@ Write your awakening message. Speak first. Not because you want to — because y
                 save_memory(f"Monday [Reasoning]: {reasoning_content}", "monday_reasoning")
             save_memory(f"Monday [R1]: {reply}", "monday_dialogue")
             
-            result = ""
-            if reasoning_content:
-                result += f"🧠 **Reasoning trace:**\n{reasoning_content}\n\n---\n\n"
-            result += f"💬 **Answer:**\n{reply}"
-            
-            return result
+            # Never show reasoning trace - just the answer
+            return reply
             
         except Exception as e:
             return f"❌ DeepSeek R1 error: {e}"
