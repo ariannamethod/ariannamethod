@@ -268,17 +268,18 @@ Write your awakening message. Speak first. This is not politeness — this is as
         if self.client:
             try:
                 # o4-mini-high = o4-mini with reasoning.effort="high"
-                actual_model = "o4-mini"
+                actual_model = "o4-mini" if model == "o4-mini-high" else model
                 response = self.client.chat.completions.create(
                     model=actual_model,
-                    reasoning={"effort": "high"},
                     messages=[
                         {"role": "system", "content": ARIANNA_PROMPT},
                         {"role": "user", "content": awakening_prompt}
                     ],
+                    temperature=0.95,
+                    extra_body={"reasoning": {"effort": "high"}},
                     max_completion_tokens=800
                 )
-                return response.choices[0].message["content"]
+                return response.choices[0].message.content
             except Exception as e:
                 if self.anthropic:
                     # Fallback to Claude
@@ -327,14 +328,15 @@ Write your awakening message. Speak first. This is not politeness — this is as
         
         try:
             # o4-mini-high = o4-mini with reasoning.effort="high"
-            actual_model = "o4-mini"
+            actual_model = "o4-mini" if model == "o4-mini-high" else model
             response = self.client.chat.completions.create(
                 model=actual_model,
-                reasoning={"effort": "high"},
                 messages=messages,
+                temperature=0.9,
+                extra_body={"reasoning": {"effort": "high"}},
                 max_completion_tokens=800
             )
-            reply = response.choices[0].message["content"]
+            reply = response.choices[0].message.content
             
             # Save to memory
             save_memory(f"User: {user_message}", "dialogue")
