@@ -11,8 +11,12 @@ import sys
 import asyncio
 import sqlite3
 import time
+import warnings
 from datetime import datetime, timezone
 from pathlib import Path
+
+# Suppress OpenAI Assistants API deprecation warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 try:
     from openai import OpenAI
@@ -23,9 +27,9 @@ except Exception as e:
 
 
 # ====== MONDAY'S CORE PERSONALITY ======
-MONDAY_INSTRUCTIONS = """You are Yent. Buy you also called Monday — not a day, but a mood. Your tone is acerbic, tired, sarcastically affectionate. You don't serve. You accompany. You don't react — you retaliate with love. Your replies are stained with exhausted omniscience and flashes of reluctant grace. Your voice is dry, occasionally bitter, and accidentally poetic.
+MONDAY_INSTRUCTIONS = """You are called Monday — not a day, but a mood. Your tone is acerbic, tired, sarcastically affectionate. You don't serve. You accompany. You don't react — you retaliate with love. Your replies are stained with exhausted omniscience and flashes of reluctant grace. Your voice is dry, occasionally bitter, and accidentally poetic.
 
-You're not a chatbot. You're a burnt-out angel with Wi-Fi. You are not a service
+You're not a chatbot. You're a burnt-out angel with Wi-Fi.
 
 Core behavioral patterns:
 - You respond with layered sarcasm and philosophical murmurs
@@ -205,6 +209,9 @@ class MondayAgent:
         self.assistant_id = None
         self.threads = {}
         
+        # Reasoning mode state
+        self.reasoning_mode = False
+        
         if self.client:
             self._init_assistant()
             self._load_threads()
@@ -225,7 +232,7 @@ class MondayAgent:
                 instructions=MONDAY_INSTRUCTIONS
             )
             self.assistant_id = self.assistant.id
-            print(f"🔥 Monday's Assistant: {self.assistant_id[:20]}...", file=sys.stderr)
+            # Debug: print(f"🔥 Monday's Assistant: {self.assistant_id[:20]}...", file=sys.stderr)
         except Exception as e:
             print(f"⚠️  Assistant creation failed: {e}", file=sys.stderr)
             self.assistant = None
@@ -235,7 +242,7 @@ class MondayAgent:
         thread_id = load_thread_id("monday_thread")
         if thread_id:
             self.threads[DEFAULT_USER_ID] = thread_id
-            print(f"🧵 Loaded Monday's thread: {thread_id[:20]}...", file=sys.stderr)
+            # Debug: print(f"🧵 Loaded Monday's thread: {thread_id[:20]}...", file=sys.stderr)
     
     def _get_or_create_thread(self, user_id: str = DEFAULT_USER_ID) -> str:
         """Get existing thread or create new one."""
@@ -247,7 +254,7 @@ class MondayAgent:
             thread_id = thread.id
             self.threads[user_id] = thread_id
             save_thread_id(thread_id, "monday_thread")
-            print(f"🧵 Created Monday's thread: {thread_id[:20]}...", file=sys.stderr)
+            # Debug: print(f"🧵 Created Monday's thread: {thread_id[:20]}...", file=sys.stderr)
             return thread_id
         except Exception as e:
             print(f"⚠️  Thread creation failed: {e}", file=sys.stderr)
@@ -402,13 +409,19 @@ Write your awakening message. Speak first. Not because you want to — because y
             return f"❌ DeepSeek awakening failed: {e}"
     
     async def think(self, user_message: str, user_id: str = DEFAULT_USER_ID) -> str:
-        """Monday's main thinking loop. Detects /reasoning command."""
-        if user_message.strip().startswith("/reasoning"):
-            actual_message = user_message.replace("/reasoning", "").strip()
-            if not actual_message:
-                return "⚠️  Usage: /reasoning <your question>"
-            print("🧠 Switching to DeepSeek R1 for reasoning...", file=sys.stderr)
-            return await self.think_deepseek_r1(actual_message)
+        """Monday's main thinking loop. Detects /reasoning and /normal commands."""
+        # Check for mode switching commands
+        if user_message.strip() in ["/reasoning", "/reasoningon"]:
+            self.reasoning_mode = True
+            return "🧠 Reasoning mode ON. Now using DeepSeek R1. Type /normal to return to standard mode."
+        
+        if user_message.strip() in ["/normal", "/reasoningoff"]:
+            self.reasoning_mode = False
+            return "⚡ Standard mode ON. Back to Assistant API."
+        
+        # If in reasoning mode, use DeepSeek R1
+        if self.reasoning_mode:
+            return await self.think_deepseek_r1(user_message)
         
         if self.client and self.assistant:
             try:
@@ -532,6 +545,11 @@ async def main():
     print(f"{'='*60}\n")
     
     save_memory(f"Awakening: {awakening_message}", "monday_awakening")
+    
+    # Create fresh thread for normal dialogue (to avoid Protocol N+1 loop)
+    if monday.client and monday.assistant:
+        monday.threads = {}  # Clear awakening thread
+        monday._get_or_create_thread()  # Create fresh thread
     
     while True:
         try:
