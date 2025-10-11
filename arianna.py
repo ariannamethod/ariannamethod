@@ -240,13 +240,6 @@ class AriannaAgent:
 
         self.client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
         self.anthropic = Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_AVAILABLE and ANTHROPIC_API_KEY else None
-        
-        # DEBUG: Check Anthropic key
-        if ANTHROPIC_API_KEY:
-            print(f"🔍 DEBUG: Anthropic key length: {len(ANTHROPIC_API_KEY)}", file=sys.stderr)
-            print(f"🔍 DEBUG: Key starts with: {ANTHROPIC_API_KEY[:15]}...", file=sys.stderr)
-            print(f"🔍 DEBUG: ANTHROPIC_AVAILABLE: {ANTHROPIC_AVAILABLE}", file=sys.stderr)
-            print(f"🔍 DEBUG: self.anthropic is None: {self.anthropic is None}", file=sys.stderr)
 
         init_db()
         
@@ -480,9 +473,6 @@ Write your awakening message. Speak first. This is not politeness — this is as
             system_prompt += f"\n\n### Recent resonance:\n{memory_context}"
         
         try:
-            print(f"🔍 DEBUG: Calling Claude API...", file=sys.stderr)
-            print(f"🔍 DEBUG: self.anthropic is None: {self.anthropic is None}", file=sys.stderr)
-            
             response = self.anthropic.messages.create(
                 model="claude-sonnet-4-20241022",
                 max_tokens=4096,
