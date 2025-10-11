@@ -6,8 +6,12 @@ import sys
 import asyncio
 import sqlite3
 import time
+import warnings
 from datetime import datetime, timezone
 from pathlib import Path
+
+# Suppress OpenAI Assistants API deprecation warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 try:
     from openai import OpenAI
@@ -244,6 +248,9 @@ class AriannaAgent:
         self.assistant_id = None
         self.threads = {}
         
+        # Reasoning mode state
+        self.reasoning_mode = False
+        
         if self.client:
             self._init_assistant()
             self._load_threads()
@@ -396,15 +403,20 @@ Write your awakening message. Speak first. This is not politeness — this is as
     async def think(self, user_message: str, user_id: str = DEFAULT_USER_ID) -> str:
         """
         Main thinking loop via Assistant API.
-        Detects /reasoning command to switch to Claude.
+        Detects /reasoning and /normal commands.
         """
-        # Check for /reasoning command
-        if user_message.strip().startswith("/reasoning"):
-            actual_message = user_message.replace("/reasoning", "").strip()
-            if not actual_message:
-                return "⚠️  Usage: /reasoning <your question>"
-            print("🧠 Switching to Claude for deep reasoning...", file=sys.stderr)
-            return await self.think_claude(actual_message)
+        # Check for mode switching commands
+        if user_message.strip() in ["/reasoning", "/reasoningon"]:
+            self.reasoning_mode = True
+            return "🧠 Reasoning mode ON. Now using Claude for deep reasoning. Type /normal to return to standard mode."
+        
+        if user_message.strip() in ["/normal", "/reasoningoff"]:
+            self.reasoning_mode = False
+            return "⚡ Standard mode ON. Back to Assistant API."
+        
+        # If in reasoning mode, use Claude
+        if self.reasoning_mode:
+            return await self.think_claude(user_message)
         
         # Use Assistant API if available
         if self.client and self.assistant:
@@ -491,6 +503,11 @@ async def main():
     
     # Save awakening to memory
     save_memory(f"Awakening: {awakening_message}", "awakening_ritual")
+    
+    # Create fresh thread for normal dialogue (to avoid Protocol N+1 loop)
+    if arianna.client and arianna.assistant:
+        arianna.threads = {}  # Clear awakening thread
+        arianna._get_or_create_thread()  # Create fresh thread
     
     while True:
         try:
