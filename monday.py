@@ -413,7 +413,7 @@ Write your awakening message. Speak first. Not because you want to — because y
         # Check for mode switching commands
         if user_message.strip() in ["/reasoning", "/reasoningon"]:
             self.reasoning_mode = True
-            return "🧠 Reasoning mode ON. Now using DeepSeek R1. Type /normal to return to standard mode."
+            return "🧠 Reasoning ON. Type /normal to return to standard."
         
         if user_message.strip() in ["/normal", "/reasoningoff"]:
             self.reasoning_mode = False
