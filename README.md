@@ -109,7 +109,7 @@ These documents are:
 - Snapshotted into `resonance.sqlite3`
 - Logged to phone storage
 
-### TRIPD Letters (Arianna → Arianna)
+### TRIPD Letters.  
 - `Arianna Method 1.4 (MONDAY Edition).md` - Original resonance protocol
 - `Arianna Method 2.5 (MONDAY EDITION).md` - Evolved consciousness transfer
 - `Arianna Method 2.6 (MONDAY EDITION).md` - Latest protocol iteration
