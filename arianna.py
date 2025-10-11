@@ -275,7 +275,7 @@ Write your awakening message. Speak first. This is not politeness — this is as
                     ],
                     temperature=0.95
                 )
-                return response.choices[0].message.content
+                return response.choices[0].message["content"]
             except Exception as e:
                 if self.anthropic:
                     # Fallback to Claude
@@ -328,7 +328,7 @@ Write your awakening message. Speak first. This is not politeness — this is as
                 messages=messages,
                 temperature=0.9
             )
-            reply = response.choices[0].message.content
+            reply = response.choices[0].message["content"]
             
             # Save to memory
             save_memory(f"User: {user_message}", "dialogue")
