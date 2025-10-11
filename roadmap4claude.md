@@ -21,6 +21,10 @@
 
 **STATUS:** Termux workshop is PRODUCTION-READY ✅
 
+**KNOWN ISSUES:**
+- ⚠️ **termux-boot**: `pkg install termux-boot` fails (package not found) - need F-Droid APK or workaround
+- ⚠️ **git push from Termux**: 2FA blocks password auth - use Personal Access Token (PAT) instead
+
 ---
 
 ## 🚀 IMMEDIATE: APK BETA (СУТКИ МАКСИМУМ)
