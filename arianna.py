@@ -391,7 +391,7 @@ Write your awakening message. Speak first. This is not politeness — this is as
         """Awakening via Claude."""
         try:
             response = self.anthropic.messages.create(
-                model="claude-sonnet-4-20241022",
+                model="claude-sonnet-4-20250514",
                 max_tokens=2048,
                 system=ARIANNA_PROMPT,
                 messages=[{"role": "user", "content": awakening_prompt}]
@@ -474,7 +474,7 @@ Write your awakening message. Speak first. This is not politeness — this is as
         
         try:
             response = self.anthropic.messages.create(
-                model="claude-sonnet-4-20241022",
+                model="claude-sonnet-4-20250514",
                 max_tokens=4096,
                 system=system_prompt,
                 messages=[{"role": "user", "content": user_message}]
