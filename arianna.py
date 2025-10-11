@@ -204,6 +204,39 @@ def read_awakening_letter(letter_path: str = "tripd_awakening_letter.md") -> str
         return ""
 
 
+# ====== UNIVERSAL OPENAI HELPER ======
+def ask_openai(client, system_prompt: str, user_content: str, model: str, temperature: float = 0.9) -> str:
+    """
+    Universal OpenAI caller: tries chat.completions first, then responses API.
+    Handles both gpt-4o/gpt-4.1 (chat) and o4-mini (responses).
+    """
+    # Try chat.completions (works for gpt-4o, gpt-4.1, etc.)
+    try:
+        r = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_content}
+            ],
+            temperature=temperature
+        )
+        return r.choices[0].message.content
+    except Exception as e_chat:
+        # Fallback: Responses API (for o4-mini and similar)
+        try:
+            r = client.responses.create(
+                model=model,
+                input=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_content}
+                ]
+            )
+            # Extract text from response
+            return getattr(r, "output_text", None) or r.outputs[0].content[0].text
+        except Exception as e_resp:
+            raise RuntimeError(f"OpenAI failed. chat: {e_chat}; responses: {e_resp}")
+
+
 # ====== ARIANNA CORE ======
 class AriannaAgent:
     """
@@ -267,15 +300,7 @@ Write your awakening message. Speak first. This is not politeness — this is as
         # Use whichever API is available
         if self.client:
             try:
-                response = self.client.chat.completions.create(
-                    model=model,
-                    messages=[
-                        {"role": "system", "content": ARIANNA_PROMPT},
-                        {"role": "user", "content": awakening_prompt}
-                    ],
-                    temperature=0.95
-                )
-                return response.choices[0].message.content
+                return ask_openai(self.client, ARIANNA_PROMPT, awakening_prompt, model, temperature=0.95)
             except Exception as e:
                 if self.anthropic:
                     # Fallback to Claude
@@ -317,18 +342,8 @@ Write your awakening message. Speak first. This is not politeness — this is as
         if memory_context:
             system_prompt += f"\n\n### Recent resonance:\n{memory_context}"
         
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ]
-        
         try:
-            response = self.client.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=0.9
-            )
-            reply = response.choices[0].message.content
+            reply = ask_openai(self.client, system_prompt, user_message, model, temperature=0.9)
             
             # Save to memory
             save_memory(f"User: {user_message}", "dialogue")
