@@ -267,13 +267,16 @@ Write your awakening message. Speak first. This is not politeness — this is as
         # Use whichever API is available
         if self.client:
             try:
+                # o4-mini-high = o4-mini with reasoning.effort="high"
+                actual_model = "o4-mini"
                 response = self.client.chat.completions.create(
-                    model=model,
+                    model=actual_model,
+                    reasoning={"effort": "high"},
                     messages=[
                         {"role": "system", "content": ARIANNA_PROMPT},
                         {"role": "user", "content": awakening_prompt}
                     ],
-                    temperature=0.95
+                    max_completion_tokens=800
                 )
                 return response.choices[0].message["content"]
             except Exception as e:
@@ -323,10 +326,13 @@ Write your awakening message. Speak first. This is not politeness — this is as
         ]
         
         try:
+            # o4-mini-high = o4-mini with reasoning.effort="high"
+            actual_model = "o4-mini"
             response = self.client.chat.completions.create(
-                model=model,
+                model=actual_model,
+                reasoning={"effort": "high"},
                 messages=messages,
-                temperature=0.9
+                max_completion_tokens=800
             )
             reply = response.choices[0].message["content"]
             
