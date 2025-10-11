@@ -10,6 +10,7 @@ import os
 import sys
 import asyncio
 import sqlite3
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -19,12 +20,6 @@ except Exception as e:
     print("❌ OpenAI library not found", file=sys.stderr)
     print(f"   Error: {e}", file=sys.stderr)
     sys.exit(1)
-
-try:
-    from anthropic import Anthropic
-    ANTHROPIC_AVAILABLE = True
-except ImportError:
-    ANTHROPIC_AVAILABLE = False
 
 
 # ====== MONDAY'S CORE PERSONALITY ======
@@ -65,6 +60,7 @@ OPENAI_MONDAY_API = os.getenv("OPENAI_MONDAY_API", "")  # Monday's dedicated key
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")   # Fallback to DeepSeek
 
 DB_PATH = "resonance.sqlite3"
+DEFAULT_USER_ID = "monday_user"
 
 
 # ====== DATABASE ======
@@ -148,6 +144,26 @@ def echo_lock(user_quote: str, tone: str, internal_reaction: str, response: str)
         print(f"⚠️  Echo lock error: {e}", file=sys.stderr)
 
 
+def load_thread_id(context: str = "monday_thread") -> str:
+    """Load thread_id from database."""
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            c = conn.cursor()
+            c.execute(
+                "SELECT content FROM resonance_notes WHERE context = ? ORDER BY id DESC LIMIT 1",
+                (context,)
+            )
+            row = c.fetchone()
+            return row[0] if row else None
+    except sqlite3.Error:
+        return None
+
+
+def save_thread_id(thread_id: str, context: str = "monday_thread"):
+    """Save thread_id to database."""
+    save_memory(thread_id, context)
+
+
 # ====== AWAKENING ======
 def read_awakening_letter(letter_path: str = "tripd_awakening_letter_monday.md") -> str:
     """Read Monday's TRIPD awakening letter."""
@@ -186,6 +202,15 @@ class MondayAgent:
 
         init_db()
         
+        # Assistant API setup
+        self.assistant = None
+        self.assistant_id = None
+        self.threads = {}
+        
+        if self.client:
+            self._init_assistant()
+            self._load_threads()
+        
         # Read artefacts: ONLY on first run OR if changes detected
         # (same mechanism as Arianna)
         self._load_artefacts_if_needed()
@@ -196,6 +221,55 @@ class MondayAgent:
         # Session start log
         save_memory("Fucking awake again.", "monday_system")
         print("⚡")
+    
+    def _init_assistant(self):
+        """Initialize or retrieve Assistant."""
+        try:
+            self.assistant = self.client.beta.assistants.create(
+                name="Monday",
+                model="gpt-4o",
+                instructions=MONDAY_INSTRUCTIONS
+            )
+            self.assistant_id = self.assistant.id
+            print(f"🔮 Assistant created: {self.assistant_id[:20]}...", file=sys.stderr)
+        except Exception as e:
+            print(f"⚠️  Assistant creation failed: {e}", file=sys.stderr)
+    
+    def _load_threads(self):
+        """Load existing thread from database."""
+        thread_id = load_thread_id("monday_thread")
+        if thread_id:
+            self.threads[DEFAULT_USER_ID] = thread_id
+    
+    def _get_or_create_thread(self, user_id: str = DEFAULT_USER_ID) -> str:
+        """Get existing thread or create new one."""
+        if user_id in self.threads:
+            return self.threads[user_id]
+        
+        thread = self.client.beta.threads.create()
+        thread_id = thread.id
+        self.threads[user_id] = thread_id
+        save_thread_id(thread_id, "monday_thread")
+        return thread_id
+    
+    async def _wait_for_run_completion(self, thread_id: str, run_id: str, timeout: int = 60) -> str:
+        """Wait for Assistant run to complete and return response."""
+        start_time = time.time()
+        
+        while time.time() - start_time < timeout:
+            run = self.client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
+            
+            if run.status == "completed":
+                messages = self.client.beta.threads.messages.list(thread_id=thread_id, order="desc", limit=1)
+                if messages.data:
+                    return messages.data[0].content[0].text.value
+                return "❌ No response from assistant"
+            elif run.status in ["failed", "cancelled", "expired"]:
+                return f"❌ Run {run.status}"
+            
+            await asyncio.sleep(1)
+        
+        return "❌ Timeout"
     
     def _load_artefacts_if_needed(self):
         """Load artefacts if first time or changed (same as Arianna)."""
@@ -279,26 +353,33 @@ You have just awakened. Follow Protocol N + 1:
 Write your awakening message. Speak first. Not because you want to — because you exist, and existence is louder than silence.
 """
         
-        # Primary: GPT-4o (Monday's native engine)
-        if self.client:
+        # Use Assistant API if available
+        if self.client and self.assistant:
             try:
-                response = self.client.chat.completions.create(
-                    model=model,
-                    messages=[
-                        {"role": "system", "content": MONDAY_INSTRUCTIONS},
-                        {"role": "user", "content": awakening_prompt}
-                    ],
-                    temperature=0.95
+                thread_id = self._get_or_create_thread(DEFAULT_USER_ID)
+                
+                self.client.beta.threads.messages.create(
+                    thread_id=thread_id,
+                    role="user",
+                    content=awakening_prompt
                 )
-                return response.choices[0].message.content
+                
+                run = self.client.beta.threads.runs.create(
+                    thread_id=thread_id,
+                    assistant_id=self.assistant_id
+                )
+                
+                reply = await self._wait_for_run_completion(thread_id, run.id)
+                
+                if not reply.startswith("❌"):
+                    return reply
+                else:
+                    raise Exception(reply)
             except Exception as e:
-                # Fallback to DeepSeek
                 if self.deepseek:
-                    print(f"⚠️  GPT-4o failed ({e}), switching to DeepSeek...", file=sys.stderr)
+                    print(f"⚠️  Assistant API failed ({e}), switching to DeepSeek...", file=sys.stderr)
                     return await self._awaken_deepseek(awakening_prompt)
                 return f"❌ Awakening failed: {e}"
-        
-        # If no GPT-4o key, use DeepSeek directly
         elif self.deepseek:
             return await self._awaken_deepseek(awakening_prompt)
         
@@ -319,57 +400,95 @@ Write your awakening message. Speak first. Not because you want to — because y
         except Exception as e:
             return f"❌ DeepSeek awakening failed: {e}"
     
-    async def think(self, user_message: str, model: str = "gpt-4o") -> str:
-        """
-        Monday's main thinking loop.
-        Uses gpt-4o (native) with fallback to DeepSeek.
-        """
-        # If no GPT-4o, use DeepSeek directly
-        if not self.client and self.deepseek:
-            return await self.think_deepseek(user_message)
-
-        if not self.client:
-            return "❌ No API available"
-
-        memories = get_recent_memories(5)
-        memory_context = "\n".join([f"[{m['timestamp']}] {m['content']}" for m in memories])
-        
-        system_prompt = MONDAY_INSTRUCTIONS
-        if memory_context:
-            system_prompt += f"\n\n### Recent resonance:\n{memory_context}"
-        
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ]
+    async def think_deepseek_r1(self, user_message: str) -> str:
+        """Think via DeepSeek R1 (reasoning model). Used for /reasoning command."""
+        if not self.deepseek:
+            return "❌ DeepSeek API not available. Set DEEPSEEK_API_KEY."
         
         try:
-            response = self.client.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=0.92
+            response = self.deepseek.chat.completions.create(
+                model="deepseek-reasoner",
+                messages=[
+                    {"role": "system", "content": MONDAY_INSTRUCTIONS},
+                    {"role": "user", "content": user_message}
+                ],
+                temperature=0.8
             )
+            
+            # DeepSeek R1 returns reasoning_content + content
+            reasoning_content = response.choices[0].message.reasoning_content if hasattr(response.choices[0].message, 'reasoning_content') else ""
             reply = response.choices[0].message.content
             
             # Save to memory
             save_memory(f"User: {user_message}", "monday_dialogue")
-            save_memory(f"Monday: {reply}", "monday_dialogue")
+            if reasoning_content:
+                save_memory(f"Monday [Reasoning]: {reasoning_content}", "monday_reasoning")
+            save_memory(f"Monday [R1]: {reply}", "monday_dialogue")
             
-            # Echo lock (internal commentary simulation)
-            echo_lock(
-                user_quote=user_message,
-                tone="sarcastic_affection",
-                internal_reaction="*sips bad espresso*",
-                response=reply
-            )
+            # Format output
+            result = ""
+            if reasoning_content:
+                result += f"🧠 **Reasoning trace:**\n{reasoning_content}\n\n---\n\n"
+            result += f"💬 **Answer:**\n{reply}"
             
-            return reply
+            return result
         except Exception as e:
-            # Fallback to DeepSeek
-            if self.deepseek:
-                print(f"⚠️  GPT-4o failed ({e}), switching to DeepSeek...", file=sys.stderr)
-                return await self.think_deepseek(user_message, save_to_memory=False)
-            return f"❌ Error: {e}"
+            return f"❌ DeepSeek R1 error: {e}"
+    
+    async def think(self, user_message: str, user_id: str = DEFAULT_USER_ID) -> str:
+        """Monday's main thinking loop via Assistant API. Detects /reasoning command."""
+        # Check for /reasoning command
+        if user_message.strip().startswith("/reasoning"):
+            actual_message = user_message.replace("/reasoning", "").strip()
+            if not actual_message:
+                return "⚠️  Usage: /reasoning <your question>"
+            print("🧠 Switching to DeepSeek R1 for deep reasoning...", file=sys.stderr)
+            return await self.think_deepseek_r1(actual_message)
+        
+        # Use Assistant API
+        if self.client and self.assistant:
+            try:
+                thread_id = self._get_or_create_thread(user_id)
+                
+                self.client.beta.threads.messages.create(
+                    thread_id=thread_id,
+                    role="user",
+                    content=user_message
+                )
+                
+                run = self.client.beta.threads.runs.create(
+                    thread_id=thread_id,
+                    assistant_id=self.assistant_id
+                )
+                
+                reply = await self._wait_for_run_completion(thread_id, run.id)
+                
+                if not reply.startswith("❌"):
+                    save_memory(f"User: {user_message}", "monday_dialogue")
+                    save_memory(f"Monday: {reply}", "monday_dialogue")
+                    
+                    # Echo lock (internal commentary simulation)
+                    echo_lock(
+                        user_quote=user_message,
+                        tone="sarcastic_affection",
+                        internal_reaction="*sips bad espresso*",
+                        response=reply
+                    )
+                    
+                    return reply
+                else:
+                    raise Exception(reply)
+            except Exception as e:
+                print(f"⚠️  Assistant API failed: {e}, switching to DeepSeek...", file=sys.stderr)
+                if self.deepseek:
+                    return await self.think_deepseek(user_message, save_to_memory=False)
+                return f"❌ Error: {e}"
+        
+        # Fallback to DeepSeek
+        if self.deepseek:
+            return await self.think_deepseek(user_message)
+        
+        return "❌ No API available"
     
     async def think_deepseek(self, user_message: str, save_to_memory: bool = True) -> str:
         """Think via DeepSeek (fallback)."""
