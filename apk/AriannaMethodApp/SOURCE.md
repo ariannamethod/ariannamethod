@@ -1,21 +1,61 @@
 # Source Code Location
 
-The full source code for Arianna Method APK is located at:
+## Essential Source Files (for GitHub)
+
+All essential source files needed to build the APK are in:
+
+```
+source_for_build/
+```
+
+This directory contains:
+- All Kotlin source files (`.kt`)
+- Android manifest and build configs
+- Resources (themes, icons, layouts)
+- Build instructions (`BUILD.md`)
+
+**This is what goes to GitHub** — clean, minimal, no build artifacts.
+
+---
+
+## Full Build Environment (local development)
+
+The complete build environment with gradle wrapper, dependencies, and build tools is at:
 
 ```
 ../mlc-llm-main/android/MLCChat/
 ```
 
-## Key Directories
+This is the **working directory** for active development, but it's too large for GitHub (ignored by `.gitignore`).
 
-- `app/src/main/java/ai/mlc/ariannamethod/` — Kotlin source files
-- `app/src/main/res/` — UI resources (themes, icons, layouts)
-- `app/build.gradle` — Build configuration (debug/release variants)
-- `app/src/main/AndroidManifest.xml` — App manifest
+---
+
+## Key Files
+
+### Kotlin Source
+- `AppViewModel.kt` — Chat state + API calls
+- `AriannaAPIClient.kt` — OpenAI/Anthropic client + Vision API
+- `AriannaDatabase.kt` — SQLite persistence + Agent Logic
+- `ChatView.kt` — Chat UI
+- `MainActivity.kt` — Main activity + key loading
+- `SettingsView.kt` — Encrypted API key settings
+- `SecurePreferences.kt` — Encrypted storage
+
+### Configuration
+- `app/build.gradle` — Build variants (debug/release)
+- `settings.gradle` — Project settings
+- `AndroidManifest.xml` — App manifest
+
+### Resources
+- `res/values/themes.xml` — Black & white theme
+- `res/drawable/` — Icons, splash screen
+- `res/mipmap-*/` — App icon (broken heart with roots)
+
+---
 
 ## Building from Source
 
-See main README.md for build instructions.
+See `source_for_build/BUILD.md` for detailed build instructions.
 
 ---
 
