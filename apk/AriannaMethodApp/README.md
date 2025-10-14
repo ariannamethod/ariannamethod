@@ -2,7 +2,7 @@
 
 ## Arianna Method — Public Release
 
-**Latest Version:** `ariannamethod-public.apk`
+**Latest Version:** `ariannamethod-public_v1.6.apk`
 
 ### What is this?
 
