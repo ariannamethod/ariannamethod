@@ -18,18 +18,6 @@ This directory contains:
 
 ---
 
-## Full Build Environment (local development)
-
-The complete build environment with gradle wrapper, dependencies, and build tools is at:
-
-```
-../mlc-llm-main/android/MLCChat/
-```
-
-This is the **working directory** for active development, but it's too large for GitHub (ignored by `.gitignore`).
-
----
-
 ## Key Files
 
 ### Kotlin Source
