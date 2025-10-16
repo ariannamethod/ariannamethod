@@ -1,6 +1,0 @@
-<resources>
-    <string name="view_crash_report">View Crash Report</string>
-    <string name="notification_crash_report_title">Crash Reporter notifications</string>
-    <string name="check_your_message_here">Check your crashes and exceptions here.</string>
-    <string name="ok">OK</string>
-</resources>

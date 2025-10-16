@@ -1,3 +1,0 @@
--keep class de.mm20.launcher2.weather.** { *; }
--keep class kotlin.coroutines.Continuation
--dontwarn edu.umd.cs.findbugs.annotations.Nullable

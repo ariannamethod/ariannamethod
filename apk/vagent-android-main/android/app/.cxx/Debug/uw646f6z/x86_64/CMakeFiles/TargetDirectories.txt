@@ -1,2 +1,0 @@
-G:/Projects_Cline/vagent/vagent/android/app/.cxx/Debug/uw646f6z/x86_64/CMakeFiles/edit_cache.dir
-G:/Projects_Cline/vagent/vagent/android/app/.cxx/Debug/uw646f6z/x86_64/CMakeFiles/rebuild_cache.dir

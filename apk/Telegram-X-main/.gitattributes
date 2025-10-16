@@ -1,2 +1,0 @@
-app/jniLibs/*/*.so filter=lfs diff=lfs merge=lfs -text
-*.zip -delta

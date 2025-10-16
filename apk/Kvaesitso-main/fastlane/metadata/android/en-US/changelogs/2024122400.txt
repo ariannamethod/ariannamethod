@@ -1,3 +1,0 @@
-- Fix filters not working
-- Fix pinning apps to favorites in secondary user profiles
-- Fix some potential crashes
