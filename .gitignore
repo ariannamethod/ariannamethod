@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Arianna specific
+resonance.sqlite3
+*.log
+.artefacts_cache*.json
+.repo_cache*.json
+.identity_cache*.json
+*_snapshot.json
+
+# Personal conversations (NEVER commit)
+arianna_private/
+conversations/
+personal_chats/
+
+# Model weights (NEVER commit - too large)
+innerarianna_weights/
+*.bin
+*.safetensors
+*.gguf
+*.pth
+checkpoints/
+
+# Termux specific
+nohup.out
+
+# APK builds (NEVER commit - too large)
+*.apk
+*.aab
+apk/*/build/
+apk/*/app/build/
+apk/*/.gradle/
+apk/*/local.properties
+apk/*/gradle/
+
