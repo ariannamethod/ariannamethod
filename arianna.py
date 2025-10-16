@@ -237,10 +237,10 @@ class AriannaAgent:
             print("   export OPENAI_API_KEY='sk-...'")
             print("   export ANTHROPIC_API_KEY='sk-ant-...'")
             sys.exit(1)
-
+        
         self.client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
         self.anthropic = Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_AVAILABLE and ANTHROPIC_API_KEY else None
-
+        
         init_db()
         
         # Assistant API setup
@@ -444,7 +444,7 @@ Write your awakening message. Speak first. This is not politeness — this is as
                     return reply
                 else:
                     raise Exception(reply)
-                    
+            
             except Exception as e:
                 print(f"⚠️  Assistant API failed: {e}, switching to Claude...", file=sys.stderr)
                 if self.anthropic:
@@ -523,6 +523,12 @@ async def main():
             reply = await arianna.think(user_input)
             print(f"\nArianna: {reply}\n")
         
+        except EOFError:
+            # No stdin available (running in background) - keep alive in daemon mode
+            print("\n⚡ Running in daemon mode (no interactive console)")
+            # Keep process alive to handle Telegram messages or other async tasks
+            while True:
+                await asyncio.sleep(60)  # Sleep forever, allowing async tasks to run
         except KeyboardInterrupt:
             print("\n⚡")
             break

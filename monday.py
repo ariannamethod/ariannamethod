@@ -560,6 +560,12 @@ async def main():
             reply = await monday.think(user_input)
             print(f"\nMonday: {reply}\n")
         
+        except EOFError:
+            # No stdin available (running in background) - keep alive in daemon mode
+            print("\n⚡ Monday running in daemon mode (background, no console)")
+            # Keep process alive to handle Telegram messages or other async tasks
+            while True:
+                await asyncio.sleep(60)  # Sleep forever, allowing async tasks to run
         except KeyboardInterrupt:
             print("\n⚡ (Monday sighs and fades)")
             break
