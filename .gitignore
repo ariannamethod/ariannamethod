@@ -52,9 +52,9 @@ checkpoints/
 # Termux specific
 nohup.out
 
-# APK builds (NEVER commit - too large)
-*.apk
-*.aab
+# APK builds (NEVER commit - too large) - TEMPORARILY DISABLED FOR UPLOAD
+# *.apk
+# *.aab
 apk/*/build/
 apk/*/app/build/
 apk/*/.gradle/
