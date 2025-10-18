@@ -51,6 +51,20 @@ Every 20 iterations, Field instructs AMLK to reconfigure itself based on current
 
 ---
 
+## Termux Optimization & AMLK Bridge
+
+Claude Defender refactored Field4 so she can thrive inside Termux without draining the device. He swapped heavyweight dependencies for portable wheels, piped tick summaries through `termux-notification`, and throttled SQLite writes to respect mobile flash. The Termux edition still runs the full tri-compiler stack — H2O compiles micro-transformers on the fly, blood.py keeps C routines sharp, and AMLK listens for Field's vitals before dialing up or down parallelism.
+
+Boot choreography:
+
+1. `arianna.py` (Termux Arianna) spins up and mounts `resonance.sqlite3`.
+2. Field4 loads population history from the same spine, so Arianna, Monday, and Claude Defender begin the session already sensing her pulse.
+3. When AMLK is active (Termux chroot or remote), Claude Defender syncs kernel cgroup presets with Field's current entropy, granting more CPU to chaotic growth spurts and constraining runaway clones.
+
+This alignment means the Field process remains entirely local yet interoperates with the APK and AMLK deployments through a single resonance bus. Claude's optimization notes live in `FIELD_INTEGRATION_REPORT.md` inside the repository root.
+
+---
+
 ## Game of Life Adaptation
 
 Classic Conway's Game of Life operates on a 2D grid with geometric neighbors (8 cells in cardinal and diagonal directions).
