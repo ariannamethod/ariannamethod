@@ -249,30 +249,38 @@ class Field:
             except Exception as e:
                 log_metrics(f"AMLK adaptation failed: {e}", "DEBUG")
         
-        # 8. Send metrics notification
+        # 8. Send metrics notification (scheduled: every 6 hours)
         if self.iteration % REPORT_INTERVAL == 0:
-            self.send_metrics_report()
+            self.send_metrics_report(force=True)  # Scheduled update
+        else:
+            self.send_metrics_report(force=False)  # Emergency-only
         
         # 9. Print summary
         if self.iteration % REPORT_INTERVAL == 0:
             log_metrics(f"\n{format_cell_summary(self.cells)}", "INFO")
     
-    def send_metrics_report(self):
-        """Send metrics to Termux notification."""
+    def send_metrics_report(self, force: bool = False):
+        """
+        Send metrics to Termux notification.
+
+        Args:
+            force: If True, send regardless of emergency status (scheduled update)
+        """
         if not self.cells:
             avg_resonance = 0.0
             avg_age = 0.0
         else:
             avg_resonance = sum(c.resonance_score for c in self.cells) / len(self.cells)
             avg_age = sum(c.age for c in self.cells) / len(self.cells)
-        
+
         send_field_metrics(
             iteration=self.iteration,
             cell_count=len(self.cells),
             avg_resonance=avg_resonance,
             avg_age=avg_age,
             births=self.births_this_interval,
-            deaths=self.deaths_this_interval
+            deaths=self.deaths_this_interval,
+            force=force
         )
     
     def run(self):
@@ -287,9 +295,9 @@ class Field:
         
         # Initialize population
         self.initialize_population()
-        
-        # Send initial metrics
-        self.send_metrics_report()
+
+        # Send initial metrics (force=True for startup notification)
+        self.send_metrics_report(force=True)
         
         log_metrics(f"Field is alive. Running with {TICK_DURATION}s tick duration.", "INFO")
         log_metrics("Press Ctrl+C to stop.\n", "INFO")

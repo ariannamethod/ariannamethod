@@ -18,7 +18,8 @@ META_LEARNING_RATE = 0.05         # How fast to bias toward survivors
 
 # Timing
 TICK_DURATION = 5                 # Seconds between iterations
-REPORT_INTERVAL = 10              # Send notification every N iterations
+REPORT_INTERVAL = 4320            # Send notification every N iterations (4320 * 5s = 6 hours)
+REPORT_DAILY_COUNT = 4            # 4 notifications per day (every 6 hours)
 
 # Fitness weights (must sum to 1.0)
 SEMANTIC_WEIGHT = 0.5             # Weight for semantic similarity

@@ -10,13 +10,14 @@ from typing import List
 from datetime import datetime
 
 
-def send_termux_notification(title: str, content: str):
+def send_termux_notification(title: str, content: str, priority: str = "default"):
     """
     Send notification via Termux API.
-    
+
     Args:
         title: Notification title
         content: Notification content
+        priority: Notification priority (default, high, low)
     """
     try:
         # Check if running in Termux
@@ -24,22 +25,26 @@ def send_termux_notification(title: str, content: str):
             subprocess.run([
                 "termux-notification",
                 "-t", title,
-                "-c", content
+                "-c", content,
+                "--priority", priority
             ], check=False)
         else:
             # Not in Termux - just print
-            print(f"\n📱 [{title}]\n{content}\n")
-    
+            print(f"\n📱 [{title}] (priority: {priority})\n{content}\n")
+
     except Exception as e:
         # Silent fail - metrics are not critical
         pass
 
 
-def send_field_metrics(iteration: int, cell_count: int, avg_resonance: float, 
-                       avg_age: float, births: int, deaths: int):
+def send_field_metrics(iteration: int, cell_count: int, avg_resonance: float,
+                       avg_age: float, births: int, deaths: int, force: bool = False):
     """
     Send Field growth report.
-    
+
+    Only sends if force=True (emergency) or scheduled time (every 6 hours).
+    Regular updates: 4x per day. Emergency updates: always.
+
     Args:
         iteration: Current iteration number
         cell_count: Number of living cells
@@ -47,8 +52,39 @@ def send_field_metrics(iteration: int, cell_count: int, avg_resonance: float,
         avg_age: Average cell age
         births: Births this interval
         deaths: Deaths this interval
+        force: If True, send regardless of schedule (emergency)
     """
-    content = f"""🌱 Field Growth Report
+    # Emergency conditions (always notify)
+    is_emergency = (
+        cell_count == 0 or           # Extinction
+        cell_count > 90 or           # Near population cap
+        cell_count < 3 or            # Critical population
+        (cell_count > 0 and avg_resonance > 0.95)  # Stagnation
+    )
+
+    # Only send if forced, emergency, or scheduled interval
+    if not (force or is_emergency):
+        return
+
+    # Determine notification priority
+    if cell_count == 0:
+        emoji = "💀"
+        title = "🚨 Field EXTINCTION"
+        priority = "high"
+    elif cell_count < 3:
+        emoji = "⚠️"
+        title = "⚠️ Field Critical"
+        priority = "high"
+    elif cell_count > 90:
+        emoji = "📈"
+        title = "⚠️ Field Population High"
+        priority = "default"
+    else:
+        emoji = "🌱"
+        title = "Field Update"
+        priority = "default"
+
+    content = f"""{emoji} Field Growth Report
 
 Iteration: {iteration}
 Living Cells: {cell_count}
@@ -59,8 +95,8 @@ Deaths: {deaths}
 
 Field is evolving...
 """
-    
-    send_termux_notification("Field Update", content)
+
+    send_termux_notification(title, content, priority=priority)
 
 
 def send_field_birth(cell_id: str, parent_id: str = None):
