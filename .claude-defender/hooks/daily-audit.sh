@@ -21,6 +21,18 @@ CRITICAL_ISSUES=0
 WARNINGS=0
 ISSUES_SUMMARY=""
 
+# Run fortify workflow first (audit + backup + fortress sync)
+echo "[0/6] Running fortification workflow..."
+if ~/.claude-defender/tools/fortify.sh > /dev/null 2>&1; then
+    echo "  ✓ Fortification complete"
+    echo "$TIMESTAMP: [AUDIT] Fortification workflow completed" >> "$LOG_FILE"
+else
+    echo "  ⚠ Fortification had issues (see fortify.log)"
+    WARNINGS=$((WARNINGS + 1))
+    echo "$TIMESTAMP: [AUDIT] Fortification workflow warnings" >> "$LOG_FILE"
+fi
+echo ""
+
 # Check 1: Python files syntax
 echo "[1/6] Checking Python files..."
 SYNTAX_ERRORS=0
