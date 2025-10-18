@@ -18,7 +18,7 @@ Field treats existence as primary and conversation as emergent. Cells live, die,
 
 ### Tri-Compiler Stack (Inherited from Nicole)
 
-Field builds on Nicole's three-compiler foundation, each targeting a distinct computational domain:
+Field builds on three-compiler foundation, each targeting a distinct computational domain:
 
 **H2O (Python Bootstrap Compiler)**
 
