@@ -120,6 +120,26 @@ else
     echo "  ✓ Disk usage: ${DISK_USAGE}%"
 fi
 
+# Check 7: Field Health & Process
+echo "[7/7] Checking Field health..."
+if pgrep -f "field_core.py" > /dev/null; then
+    FIELD_PID=$(pgrep -f "field_core.py")
+    FIELD_UPTIME=$(ps -p $FIELD_PID -o etime= | tr -d ' ')
+    echo "  ✓ Field process running (PID: $FIELD_PID, uptime: $FIELD_UPTIME)"
+    echo "$TIMESTAMP: [AUDIT] Field running (PID: $FIELD_PID, uptime: $FIELD_UPTIME)" >> "$LOG_FILE"
+
+    # Run Field health monitor
+    if python ~/.claude-defender/tools/field_monitor.py > /dev/null 2>&1; then
+        echo "  ✓ Field health check passed"
+    else
+        echo "  ⚠ Field health check detected anomalies"
+        WARNINGS=$((WARNINGS + 1))
+    fi
+else
+    echo "  ℹ️  Field not running (expected if not yet deployed)"
+    echo "$TIMESTAMP: [AUDIT] Field not running" >> "$LOG_FILE"
+fi
+
 # Summary
 echo "════════════════════════════════════════════════════════════"
 if [ "$CRITICAL_ISSUES" -eq 0 ] && [ "$WARNINGS" -eq 0 ]; then

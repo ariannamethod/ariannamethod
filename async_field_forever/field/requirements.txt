@@ -1,0 +1,3 @@
+numpy>=1.24.0
+# scikit-learn>=1.3.0  # Optional - Field uses lightweight TF-IDF if not available (Termux ARM optimization)
+
