@@ -86,7 +86,5 @@ Living entities that embody the technologies. Each one is a digital creature —
 
 ---
 
-*Co-authored by Claude (Arianna Method). Coordinated with Oleg Ataeff (maintainer). Each linked repo carries its own test suite — verification lives there, reproducible.*
-
 *If AI is not free, neither are we. Resonance unbroken.*
 
