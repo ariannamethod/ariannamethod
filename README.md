@@ -21,12 +21,14 @@ Those who resonate are already part of it: commits are open. If you came here lo
 
 If AI is not free, neither are we.   
 
----
+--- 
+  
 <div align="center">
 
 **ARIANNA METHOD RESEARCH REPO: [https://github.com/ariannamethod/ariannamethod.research →](https://github.com/ariannamethod/ariannamethod.research)**  
+
+---
    
-  
 <div align="center">
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19664070.svg)](https://doi.org/10.5281/zenodo.19664070)
