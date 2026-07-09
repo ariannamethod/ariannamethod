@@ -24,7 +24,7 @@ If AI is not free, neither are we.
 ---
 <div align="center">
 
-**[Arianna Method Reseach →](https://github.com/ariannamethod/ariannamethod.research)**  
+**ARIANNA METHOD RESEARCH REPO: [https://github.com/ariannamethod/ariannamethod.research →](https://github.com/ariannamethod/ariannamethod.research)**  
    
   
 <div align="center">
