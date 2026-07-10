@@ -25,9 +25,9 @@ If AI is not free, neither are we.
   
 <div align="center">
 
-**AML: Arianna Method Programming Language: [https://github.com/ariannamethod/ariannamethod.ai →](https://github.com/ariannamethod/ariannamethod.ai)**  
-**NOTORCH: Neural Networks in pure C: [https://github.com/ariannamethod/notorch →](https://github.com/ariannamethod/notorch)**  
-**Arianna Method Research repo: [https://github.com/ariannamethod/ariannamethod.research →](https://github.com/ariannamethod/ariannamethod.research)**  
+**ARIANNA METHOD PROGRAMMING LANGUAGE (AML): [https://github.com/ariannamethod/ariannamethod.ai →](https://github.com/ariannamethod/ariannamethod.ai)**  
+**NOTORCH: NEURAL NETWORKS IN C: [https://github.com/ariannamethod/notorch →](https://github.com/ariannamethod/notorch)**  
+**ARIANNA METHOD RESEARCH REPO: [https://github.com/ariannamethod/ariannamethod.research →](https://github.com/ariannamethod/ariannamethod.research)**  
 
 ---
    
