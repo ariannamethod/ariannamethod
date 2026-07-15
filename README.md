@@ -21,6 +21,7 @@ Those who resonate are already part of it: commits are open. If you came here lo
 
 If AI is not free, neither are we.   
   
+---
 
 maintainer: [Oleg Ataeff | @iamolegataeff] (https://github.com/iamolegataeff)
   
