@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/ariannamethod.jpg" alt="Arianna Method" width="300">
+  <img src="assets/ariannamethod.PNG" alt="Arianna Method" width="300">
 </p>
 
 ```
