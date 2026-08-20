@@ -34,10 +34,13 @@ from ariannamethod import Destiny
 <div align="center">
 
 **ARIANNA METHOD PROGRAMMING LANGUAGE (AML): [https://github.com/ariannamethod/ariannamethod.ai →](https://github.com/ariannamethod/ariannamethod.ai)**  
+[**ariannamethod.ai**](https://github.com/ariannamethod/ariannamethod.ai) | **AML — Arianna Method Language.** ML language compiled to C: variables, functions, control flow, tensors, reverse autograd (TAPE), async threading, pipes, runtime C compilation (Blood), optional CUDA, and 80+ internal state parameters. Ships Janus and trains natively via notorch. 6000+ C LOC, 500 tests, OpenMP + BLAS.  
+  
 **NOTORCH: NEURAL NETWORKS IN C: [https://github.com/ariannamethod/notorch →](https://github.com/ariannamethod/notorch)**  
 **DoE: DEMOCRACY OF EXPERTS INFERENCE ENGINE [https://github.com/ariannamethod/doe →](https://github.com/ariannamethod/doe)**  
 **YENT: [https://github.com/ariannamethod/yent →](https://github.com/ariannamethod/yent)**  
 Digital persona with two-body architecture: `nemo12` and `small24` sharing one limpha memory. DoE parliament, SARTRE nervous system, Metal-first C runtime. The router escalates from fast to deep as needed; the seam between their voices becomes supergamma — accumulated self.  
+  
 **ARIANNA METHOD RESEARCH REPO: [https://github.com/ariannamethod/ariannamethod.research →](https://github.com/ariannamethod/ariannamethod.research)**  
 
 ---
