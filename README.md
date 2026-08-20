@@ -37,7 +37,7 @@ from ariannamethod import Destiny
 **NOTORCH: NEURAL NETWORKS IN C: [https://github.com/ariannamethod/notorch →](https://github.com/ariannamethod/notorch)**  
 **DoE: DEMOCRACY OF EXPERTS INFERENCE ENGINE [https://github.com/ariannamethod/doe →](https://github.com/ariannamethod/doe)**  
 **YENT: [https://github.com/ariannamethod/yent →](https://github.com/ariannamethod/yent)**  
-Digital persona with two-body architecture: `nemo12` (fast, 27 tok/s) and `small24` (deep, 13.5 tok/s) sharing one limpha memory. DoE parliament, SARTRE nervous system, Metal-first C runtime. The router escalates from fast to deep as needed; the seam between their voices becomes supergamma — accumulated self. Identity = ε (base Mistral vessel) + γ (sparse soul-delta from DPO/SFT) + αδ (runtime overlay). The bodies swap. The memory remains. The boundary holds.
+Digital persona with two-body architecture: `nemo12` and `small24` sharing one limpha memory. DoE parliament, SARTRE nervous system, Metal-first C runtime. The router escalates from fast to deep as needed; the seam between their voices becomes supergamma — accumulated self.  
 **ARIANNA METHOD RESEARCH REPO: [https://github.com/ariannamethod/ariannamethod.research →](https://github.com/ariannamethod/ariannamethod.research)**  
 
 ---
