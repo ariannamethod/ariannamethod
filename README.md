@@ -28,7 +28,7 @@ from ariannamethod import Destiny
 <div align="center">
 
 **maintainer🤘: Oleg Ataeff**: [https://github.com/iamolegataeff →](https://github.com/iamolegataeff)
-**or** [https://github.com/pitomadom →](https://github.com/ariannamethod/pitomadom)
+**or** [https://github.com/pitomadom →](https://github.com/pitomadom)
   
 --- 
   
