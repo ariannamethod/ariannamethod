@@ -75,7 +75,6 @@ Foundations, mechanisms, and frameworks the organisms are built on.
 | [**janus**](https://github.com/ariannamethod/janus) | **Post-transformer architecture with triple attention.** Content + RRPRAM + Janus Echo per layer, dual matrices (A/B), calendar-drift blending, and 12 bidirectional reasoning steps. Core architecture behind NanoJanus 19.6M through Janus 285M. |
 | [**DoE**](https://github.com/ariannamethod/doe) | **Democracy of Experts — architecture-agnostic super-inference.** A single-file C system that indexes GGUF models read-only and gives them a living LoRA parliament whose experts vote on every token and adapt through Hebbian learning. Sonar profiling, the Dario field overlay, web and terminal interfaces, CPU and GPU backends, and broad quantization support make DOE a complete inference organism. |
 | [**postgpt**](https://github.com/ariannamethod/postgpt) | **MetaWeights probability-space modeling.** Co-occurrence statistics (BPE bigram/trigram + traces) initialize the transformer directly. Dual attention (Content + RRPRAM) with Dario overlay enables coherent generation without gradient training. ~140K params in Python + C. |
-| [**nanollama**](https://github.com/ariannamethod/nanollama) | **Train Llama 3 from scratch at multiple scales.** Pipeline includes FineWeb-Edu pretraining, LoRA personality SFT, gamma extraction, GGUF export, multilingual tokenizer growth, and Go inference. Range: 89M to 7.9B, with verified training results. |
 
 ---
 
