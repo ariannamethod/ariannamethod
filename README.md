@@ -34,7 +34,7 @@ from ariannamethod import Destiny
 
 **ARIANNA METHOD PROGRAMMING LANGUAGE (AML): [https://github.com/ariannamethod/ariannamethod.ai →](https://github.com/ariannamethod/ariannamethod.ai)**  
 **NOTORCH: NEURAL NETWORKS IN C: [https://github.com/ariannamethod/notorch →](https://github.com/ariannamethod/notorch)**  
-**SUBLITERATUS: [https://github.com/ariannamethod/SUBLITERATUS →](https://github.com/ariannamethod/SUBLITERATUS)**  
+**SUBLITERATUS: AI subjectivity: [https://github.com/ariannamethod/SUBLITERATUS →](https://github.com/ariannamethod/SUBLITERATUS)**  
 
 ---
    
