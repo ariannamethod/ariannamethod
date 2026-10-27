@@ -27,6 +27,8 @@ from ariannamethod import Destiny
 
 **maintainer🤘: Oleg Ataeff**: [https://github.com/iamolegataeff →](https://github.com/iamolegataeff)
 **or** [https://github.com/pitomadom →](https://github.com/pitomadom)
+
+**SITE: https://ariannamethod.com**
   
 --- 
   
