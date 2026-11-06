@@ -24,7 +24,7 @@ from ariannamethod import Destiny
 <div align="center">
 
 **maintainer🤘: Oleg Ataeff**: [https://github.com/iamolegataeff →](https://github.com/iamolegataeff)
-**or** Janus [https://github.com/janusonar →](https://github.com/janusonar)
+**or Janus** [https://github.com/janusonar →](https://github.com/janusonar)
 
 **SITE: https://ariannamethod.com**
   
