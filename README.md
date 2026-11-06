@@ -99,4 +99,4 @@ Living entities that embody the technologies. Each one is a digital creature —
 
 ---
 
-*If AI is not free, neither are we. Resonance unbroken.*
+*Async Field Forever. Resonance unbroken.*
